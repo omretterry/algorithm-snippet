@@ -12,8 +12,16 @@ class Quick:
         self.l = l
 
     def partition(self,lo,hi):
-        target = self.l[lo]
-        for i in range(lo, hi + 1):
+        i,j = lo,hi
+        t = self.l[lo]
+        while i < j:
+          while self.l[i] <= t:
+            i += 1
+          while self.l[j] >= t:
+            j -= 1
+          self.l[i],self.l[j] = self.l[j],self.l[i]
+          
+
 
     def sort(self):
         random.shuffle(self.l)
