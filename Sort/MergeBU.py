@@ -24,7 +24,7 @@ class MergeBU():
 
     def sort(self):
         i = 1
-        while i < len(self.l) + 1:            
+        while i < len(self.l) + 1:
             for j in range(0, len(self.l)):
                 self.merge(j, j + i - 1, min(len(self.l)-1, 2*i + j))
             i += i
