@@ -1,6 +1,6 @@
-# 自顶向下的归并算法
+# 自底向上的归并排序
 
-class Merge():
+class MergeBU():
     def __init__(self, l):
         self.l = l
 
@@ -22,16 +22,15 @@ class Merge():
                 self.l[k] = t[j]
                 j += 1
 
-    def sort(self, lo, hi):
-        if lo >= hi:
-            return
-        mid = lo + (hi - lo) // 2
-        self.sort(lo, mid)
-        self.sort(mid+1, hi)
-        self.merge(lo, mid, hi)
+    def sort(self):
+        i = 1
+        while i < len(self.l) + 1:            
+            for j in range(0, len(self.l)):
+                self.merge(j, j + i - 1, min(len(self.l)-1, 2*i + j))
+            i += i
 
 
 l = [3, 1, 2, 6, 8, 5, 7, 9]
-merge = Merge(l)
-merge.sort(0, len(l) - 1)
+merge = MergeBU(l)
+merge.sort()
 print(l)
