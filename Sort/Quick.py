@@ -11,31 +11,33 @@ class Quick:
     def __init__(self, l):
         self.l = l
 
-    def partition(self,lo,hi):
-        i,j = lo,hi
+    def partition(self, lo, hi):
+        i, j = lo + 1, hi
         t = self.l[lo]
-        while i < j:
-          while self.l[i] <= t:
-            i += 1
-          while self.l[j] >= t:
-            j -= 1
-          self.l[i],self.l[j] = self.l[j],self.l[i]
-          
-
+        while i <= j:
+            while self.l[i] < t and i < hi:
+                i += 1
+            while self.l[j] >= t and j > lo:
+                j -= 1
+            if i >= j:
+              break
+            self.l[i], self.l[j] = self.l[j], self.l[i]
+        self.l[j], self.l[lo] = self.l[lo], self.l[j]
+        return j
 
     def sort(self):
         random.shuffle(self.l)
-        self.sort(self, lo, hi)
+        self.quickSort(0, len(self.l) - 1)
 
-    def sort(self, lo, hi):
-        if lo > hi:
+    def quickSort(self, lo, hi):
+        if lo >= hi:
             return
-        p = self.partition(lo ,hi )
-        self.sort(lo, p)
-        self.sort(p+1, hi)
+        p = self.partition(lo, hi)
+        self.quickSort(lo, p-1)
+        self.quickSort(p+1, hi)
 
 
-l = [3, 1, 2]
+l = [3, 1, 2, 5, 6, 7, 4, 9]
 quick = Quick(l)
 quick.sort()
 print(l)
