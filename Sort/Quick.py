@@ -11,6 +11,7 @@ class Quick:
     def __init__(self, l):
         self.l = l
 
+    # 对向双指正写法
     def partition(self, lo, hi):
         i, j = lo + 1, hi
         t = self.l[lo]
@@ -20,12 +21,13 @@ class Quick:
             while self.l[j] >= t and j > lo:
                 j -= 1
             if i >= j:
-              break
+                break
             self.l[i], self.l[j] = self.l[j], self.l[i]
         self.l[j], self.l[lo] = self.l[lo], self.l[j]
         return j
 
     def sort(self):
+        # 避免最坏时间复杂度情况
         random.shuffle(self.l)
         self.quickSort(0, len(self.l) - 1)
 
@@ -37,7 +39,8 @@ class Quick:
         self.quickSort(p+1, hi)
 
 
-l = [3, 1, 2, 5, 6, 7, 4, 9]
+# l = [3, 1, 2, 5, 6, 7, 4, 9]
+l = [3, 2]
 quick = Quick(l)
 quick.sort()
 print(l)
