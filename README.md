@@ -16,4 +16,5 @@
   * Quick3Way - 3向切分的快速排序（避免相同元素的无效递归）
 
 * PriorityQueue（优先队列）
-  * MaxPQ - 基于堆的优先队列
+  * MaxPQ - 基于堆的优先队列 
+  * IndexMinPQ - 索引优先队列
