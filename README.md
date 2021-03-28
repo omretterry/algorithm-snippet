@@ -18,3 +18,9 @@
 * PriorityQueue（优先队列）
   * MaxPQ - 基于堆的优先队列 
   * IndexMinPQ - 索引优先队列
+
+* Search（查找算法）
+  * SymbolTable - 符号表/字典表 
+    * SequentialSearchST - 基于链表的无序符号表
+    * BinarySearchST - 基于有序数组的有序符号表
+
