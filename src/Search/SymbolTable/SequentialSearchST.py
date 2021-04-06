@@ -3,11 +3,9 @@
 # 优点：适用于小型应用
 # 缺点：对于大型符号表很慢
 
-class Node():
-    def __init__(self, key=None, val=None, next=None):
-        self.key = key
-        self.val = val
-        self.next = next
+import sys
+sys.path.append('../../..')
+from helper.Node import Node
 
 
 class SequentialSearchST():

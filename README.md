@@ -23,4 +23,5 @@
   * SymbolTable - 符号表/字典表 
     * SequentialSearchST - 基于链表的无序符号表
     * BinarySearchST - 基于有序数组的有序符号表
+    * BST - 二叉搜索树
 
