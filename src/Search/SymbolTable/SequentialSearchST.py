@@ -4,7 +4,8 @@
 # 缺点：对于大型符号表很慢
 
 import sys
-sys.path.append('../../..')
+from pathlib import Path
+sys.path.append(str(Path(__file__).parents[3].resolve()))
 from helper.Node import Node
 
 
