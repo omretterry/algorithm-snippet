@@ -13,10 +13,10 @@ class RBTreeNode():
     RED = 'red'
     BLACK = 'black'
     
-    def __init__(self, key=None, val=None, size=1, left=None, right=None, color=RED):
+    def __init__(self, key=None, val=None, size=1, left=None, right=None, color=RBTreeNode.RED):
         self.key = key
         self.val = val
         self.size = size
         self.left = left
         self.right = right
-        self.color = RED
+        self.color = color
