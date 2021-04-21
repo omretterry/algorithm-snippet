@@ -53,6 +53,13 @@ class RedBlackBst():
             return RBTreeNode(key, value)
         if key < node.key:
             node.left = self._put(node.left, key, value)
-        else:
+        elif key > node.key:
             node.right = self._put(node.right, key, value)
+        else:
+            node.val = val
+        
+        # 红黑树节点操作
+        # TODO
+
+        node.size = node.left.size + node.right.size + 1
         return node
