@@ -11,10 +11,17 @@ from helper.TreeNode import RBTreeNode
 
 class RedBlackBst():
     def __init__(self):
-        pass
+        self.root = None
+
+    def size(self, node):
+        if node is None:
+            return 0
+        return node.size
 
     # 指向当前节点的链接是否为红链接
     def isRed(self, node):
+        if node is None:
+            return False
         return node.color is RBTreeNode.RED
 
     # 红链接右旋转
@@ -57,9 +64,27 @@ class RedBlackBst():
             node.right = self._put(node.right, key, value)
         else:
             node.val = val
-        
-        # 红黑树节点操作
-        # TODO
 
-        node.size = node.left.size + node.right.size + 1
+        # 红黑树节点操作
+        if self.isRed(node.right) and not self.isRed(node.left):
+            node = self.rotateLeft(node)
+        if self.isRed(node.left) and self.isRed(node.left.left):
+            node = self.rotateRight(node)
+        if self.isRed(node.left) and self.isRed(node.right):
+            node = self.flipColor(node)
+
+        node.size = self.size(node.left) + self.size(node.right) + 1
         return node
+
+
+rbbst = RedBlackBst()
+testData = [
+    (4, 'F'),
+    (2, 'E'),
+    (5, 'A'),
+    (1, 'B'),
+    (6, 'C'),
+]
+for item in testData:
+    print('put:', item[0], ":", item[1])
+    rbbst.put(item[0], item[1])
