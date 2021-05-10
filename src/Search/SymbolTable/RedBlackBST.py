@@ -7,6 +7,7 @@ import sys
 from pathlib import Path
 sys.path.append(str(Path(__file__).parents[3].resolve()))
 from helper.TreeNode import RBTreeNode
+from helper.TreeLog import print_rbtree
 
 
 class RedBlackBst():
@@ -88,3 +89,5 @@ testData = [
 for item in testData:
     print('put:', item[0], ":", item[1])
     rbbst.put(item[0], item[1])
+
+print_rbtree(rbbst.root)
