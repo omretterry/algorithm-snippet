@@ -1,7 +1,7 @@
 # Print Tree In Console
 def print_rbtree(root, val="val", left="left", right="right", color="color"):
     def colorNode(root, val, color):
-        if getattr(root, color) == 'red':
+        if getattr(root, color) != 'red':
             return '%s' % getattr(root, val)
         else:
             return '%s' % ('\033[91m' + getattr(root, val) + '\033[0m')

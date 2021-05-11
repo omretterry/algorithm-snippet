@@ -47,9 +47,9 @@ class RedBlackBst():
 
     # 反转节点颜色
     def flipColor(self, node):
-        node.left.color = not node.left.color
-        node.right.color = not node.right.color
-        node.color = not node.color
+        node.left.color = RBTreeNode.BLACK if node.left.color is RBTreeNode.RED else RBTreeNode.RED
+        node.right.color = RBTreeNode.BLACK if node.left.color is RBTreeNode.RED else RBTreeNode.RED
+        node.color = RBTreeNode.BLACK if node.left.color is RBTreeNode.RED else RBTreeNode.RED
         return node
 
     def put(self, key, value):
@@ -80,14 +80,15 @@ class RedBlackBst():
 
 rbbst = RedBlackBst()
 testData = [
-    (4, 'F'),
-    (2, 'E'),
-    (5, 'A'),
-    (1, 'B'),
-    (6, 'C'),
+    ('f', 'F'),
+    ('e', 'E'),
+    ('a', 'A'),
+    ('b', 'B'),
+    ('c', 'C'),
 ]
 for item in testData:
     print('put:', item[0], ":", item[1])
     rbbst.put(item[0], item[1])
+    print_rbtree(rbbst.root)
 
 print_rbtree(rbbst.root)
