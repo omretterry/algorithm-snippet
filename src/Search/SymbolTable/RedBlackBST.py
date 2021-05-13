@@ -26,23 +26,21 @@ class RedBlackBst():
         return node.color is RBTreeNode.RED
 
     # 红链接右旋转
-    def rotateRight(self, node):
-        x = node.left
-        node.left = x.right
-        x.right = node
-        x.color = x.right.color
-        x.right.color = RBTreeNode.RED
-        node.size, x.size = x.size, node.size
+    def rotateRight(self, h):
+        x = h.left
+        h.left = x.right
+        x.right = h
+        x.color, h.color = h.color, x.color
+        h.size, x.size = x.size, h.size
         return x
 
     # 红链接左旋转
-    def rotateLeft(self, node):
-        x = node.right
-        node.right = x.left
-        x.left = node
-        x.color = x.left.color
-        x.left.color = RBTreeNode.RED
-        node.size, x.size = x.size, node.size
+    def rotateLeft(self, h):
+        x = h.right
+        h.right = x.left
+        x.left = h
+        x.color, h.color = h.color, x.color
+        h.size, x.size = x.size, h.size
         return x
 
     # 反转节点颜色
@@ -65,6 +63,15 @@ class RedBlackBst():
             node.right = self._put(node.right, key, value)
         else:
             node.val = val
+
+        # 情况1 插入在黑色节点下方
+        # 情况1-1: 左子节点 不需要调整
+        # 情况1-2: 右子节点 左旋 + 反色 -> 情况 1-1
+
+        # 情况2 插入在红色节点下方
+        # 情况2-1: 左子节点 右旋 + 反色
+        # 情况2-2: 右子节点 左旋 -> 情况 2-1
+
 
         # 红黑树节点操作
         if self.isRed(node.right) and not self.isRed(node.left):
