@@ -10,7 +10,7 @@
 # 4.如果一个结点是红的，那么它的两个儿子都是黑的（不存在两个连续的红色节点）
 # 5.对于任意结点而言，其到叶结点树尾端NIL指针的每条路径都包含相同数目的黑结点 （也就是黑节点平衡）
 
-# 算法4 中的红黑树实现： 基于 2-3树的 左倾红黑树 红节点只允许在左子节点
+# 算法4 中的红黑树实现： 基于 2-3树的 左倾红黑树（LLRB - left-leaning rb tree） 红节点只允许在左子节点
 
 import sys
 from pathlib import Path
@@ -86,7 +86,7 @@ class RedBlackBst():
         # 综上，红黑树插入主要考虑红色节点处插入的向上生长的过程
         # 总结情况1 和 情况2 可以得出算法4中的简化的代码
 
-        print_rbtree(node)
+        # print_rbtree(node)
 
         # 红黑树节点操作
 
@@ -94,38 +94,135 @@ class RedBlackBst():
         # 右节点是红色的，且不是需要反色的情况（左节点不是红的），就先左旋
         if self.isRed(node.right) and not self.isRed(node.left):
             node = self.rotateLeft(node)
-            print("rotate left:")
-            print_rbtree(node)
+            # print("rotate left:")
+            # print_rbtree(node)
 
         # 这个地方一个理解的难点是，左旋和右旋操作不会在一次递归里面同时执行的，因为情况2-1右旋的对象是父节点
         # 所以下面两个操作放在 else 条件里也不会有问题， 算法4中，没有放在else里，Robert大佬只是将他们统一了状态转移，简化了条件
         else:
             if self.isRed(node.left) and self.isRed(node.left.left):
                 node = self.rotateRight(node)
-                print("rotate right:")
-                print_rbtree(node)
+                # print("rotate right:")
+                # print_rbtree(node)
             if self.isRed(node.left) and self.isRed(node.right):
                 node = self.flipColor(node)
-                print("flip color:")
-                print_rbtree(node)
+                # print("flip color:")
+                # print_rbtree(node)
 
         node.size = self.size(node.left) + self.size(node.right) + 1
         return node
 
+    # 删除节点部分 ----- start -----
+
+    # 删除节点调整节点不为2-节点的方法
+    def _moveRedLeft(self, node):
+        # 情况0: 当前节点不是一个2-节点，不用操作
+        # 情况1: 当前节点是一个2-节点，兄弟节点借不出来（也是一个2-节点） 合并成一个临时的4-节点
+        # 情况2: 当前节点是一个2-节点，兄弟节点能够借出来，借一个过来变成一个3-节点
+
+        # 这是正常思路，但是算法4中的节点是没有定义指向父亲节点的指针的，所以递归中无法简单的拿到当前节点的兄弟节点
+        # 所以这边在父节点的时候，帮助左子节点进行调整
+        if not self.isRed(node.left) and not self.isRed(node.left.left):
+            # 左右子节点都是2-节点
+            if not self.isRed(node.right.left):
+                node.color = RBTreeNode.BLACK
+                node.left.color = RBTreeNode.RED
+                node.right.color = RBTreeNode.RED
+            elif self.isRed(node.right.left):
+                node.right = self.rotateRight(node.right)
+                node = self.rotateLeft(node)
+                node.right.color = RBTreeNode.BLACK
+                node.left.left.color = RBTreeNode.RED
+
+        return node
+
+    # 删除操作结束后，向上平衡红黑树（分解临时的4-节点）
+    def _blance(self, node):
+        if self.isRed(node.right):
+            # 节点左旋，我们是用的moveRedLeft方式，保证了只有带删除的叶子节点可能是一个临时的4-节点
+            # 其他的父亲节点可能为右节点为红色的3-节点（如果是4-节点，向下的过程会被借过来）
+            # print('before blance: ')
+            # print_rbtree(node)
+            node = self.rotateLeft(node)
+            # print('after blance: ')
+            # print_rbtree(node)
+
+        # 算法4 中提供的方式，但是我们moveRedLeft未使用算法4中的方式，所以在blance时可以简化操作
+
+        # if self.isRed(node.right) and not self.isRed(node.left):
+        #     node = self.rotateLeft(node)
+        # else:
+        #     if self.isRed(node.left) and self.isRed(node.left.left):
+        #         node = self.rotateRight(node)
+        #     if self.isRed(node.left) and self.isRed(node.right):
+        #         node = self.flipColor(node)
+        return node
+
+    def delMin(self):
+        self.root = self._delMin(self.root)
+
+    # 红黑树删除最小键
+    def _delMin(self, node):
+        # 最小节点是左子树的叶子节点，分两种情况考虑
+        # 情况1：删除的是红色节点 - 直接删除，无需调整
+
+        # 情况2：删除的是黑色节点 - 影响平衡，需调整
+        # 情况2-1：兄弟节点是一个3-节点，可以借一个过来
+        # 情况2-2：兄弟节点是一个2-节点，不能借。需向上递归进行调整
+        #   具体方法为：节点删除后，父节点记作 double black保持平衡，结下来就是向上回溯然后消化掉double black的过程
+        #             什么时候能消化，就是double black 的兄弟节点是一个3-节点，可以借一个过来，然后消化掉double black
+        #             如果一直回溯到了根节点，就以根节点左旋，将拉下来的根节点置红，保持左右子树平衡
+
+        # 上述常规思路是，先删除节点，然后在消化double black。
+        # 也就是我没钱，但是我花了，一直奢着帐，然后一路向上找到能借我钱的人，我再把钱还了
+        # 算法4 中提供了另外一种思路，就是我先把钱要过来，然后保证我有足够的钱花，最后我在把剩的钱，调整回去
+
+        # 算法4 中提供的解决方案为在向下递归查找最小子节点的时候，始终保证当前节点不是一个2-节点。保证当前节点为一个3-节点或者一个临时的4-节点（算法4 定义的LLRB不允许4-节点）
+        # 删除节点后向上调整临时的4-节点
+        if node.left is None:
+            return node.right
+
+        # print("before move red left:")
+        # print_rbtree(node)
+        # 调整当前节点不为一个2-节点
+        node = self._moveRedLeft(node)
+        # print("after move red left:")
+        # print_rbtree(node)
+
+        node.left = self._delMin(node.left)
+
+        # 递归向上的调整操作
+        node.size = self.size(node.left) + self.size(node.right) + 1
+        return self._blance(node)
+
+    # 某个节点的后继节点
+    def _min(self, node):
+        if node.left is None:
+            return node
+        return self._min(node.left)
+
+    def delete(self, key):
+        self.root = self._delete(self.root, key)
+        return self.root
+
+    # 红黑树删除指定节点
+    def _delete(self, node, key):
+        pass
 
 
 # 操作部分
 rbbst = RedBlackBst()
-testData = [
-    (1, '1'),
-    (2, '2'),
-    (3, '3'),
-    (4, '4'),
-    (5, '5'),
-]
-for item in testData:
-    print('put:', item[0], ":", item[1])
-    rbbst.put(item[0], item[1])
-    print_rbtree(rbbst.root)
 
+import random
+for i in random.sample(range(10), 10):
+    # print('put:', i, ":", i)
+    rbbst.put(i, str(i))
+    # print_rbtree(rbbst.root)
+print_rbtree(rbbst.root)
+
+# delmin
+rbbst.delMin()
+print_rbtree(rbbst.root)
+
+rbbst.delete(3)
 print_rbtree(rbbst.root)
