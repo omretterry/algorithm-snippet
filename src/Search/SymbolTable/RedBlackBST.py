@@ -139,6 +139,7 @@ class RedBlackBst():
 
     # 从左节点借节点过来
     def _moveRedRight(self, node):
+        # 右节点是黑色节点
         if not self.isRed(node.right) and not self.isRed(node.right.left):
             # 左右子节点都是2-节点
             if not self.isRed(node.left.left):
@@ -146,7 +147,6 @@ class RedBlackBst():
                 node.left.color = RBTreeNode.RED
                 node.right.color = RBTreeNode.RED
             elif self.isRed(node.left.left):
-                node.left = self.rotateLeft(node.left)
                 node = self.rotateRight(node)
                 node.left.color = RBTreeNode.BLACK
                 node.right.left.color = RBTreeNode.RED
@@ -164,7 +164,6 @@ class RedBlackBst():
             # print_rbtree(node)
 
         # 算法4 中提供的方式，但是我们moveRedLeft未使用算法4中的方式，所以在blance时可以简化操作
-
         if self.isRed(node.right) and not self.isRed(node.left):
             node = self.rotateLeft(node)
         else:
