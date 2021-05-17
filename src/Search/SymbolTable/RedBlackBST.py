@@ -129,7 +129,7 @@ class RedBlackBst():
                 node.color = RBTreeNode.BLACK
                 node.left.color = RBTreeNode.RED
                 node.right.color = RBTreeNode.RED
-            elif self.isRed(node.right.left):
+            else:
                 node.right = self.rotateRight(node.right)
                 node = self.rotateLeft(node)
                 node.right.color = RBTreeNode.BLACK
@@ -142,18 +142,22 @@ class RedBlackBst():
         # 右节点是黑色节点
         if not self.isRed(node.right) and not self.isRed(node.right.left):
             # 左右子节点都是2-节点
-            if not self.isRed(node.left.left):
+            if not self.isRed(node.left) and not self.isRed(node.left.left):
                 node.color = RBTreeNode.BLACK
                 node.left.color = RBTreeNode.RED
                 node.right.color = RBTreeNode.RED
-            elif self.isRed(node.left.left):
+            else:
+                print_rbtree(node)
                 node = self.rotateRight(node)
+                print_rbtree(node)
                 node.left.color = RBTreeNode.BLACK
-                node.right.left.color = RBTreeNode.RED
-        return node 
+                node.right.color = RBTreeNode.RED
+                node.right = self.rotateLeft(node.right)
+        return node
 
     # 删除操作结束后，向上平衡红黑树（分解临时的4-节点）
     def _blance(self, node):
+        # delmin 平衡中只需左旋
         if self.isRed(node.right):
             # 节点左旋，我们是用的moveRedLeft方式，保证了只有带删除的叶子节点可能是一个临时的4-节点
             # 其他的父亲节点可能为右节点为红色的3-节点（如果是4-节点，向下的过程会被借过来）
@@ -163,7 +167,7 @@ class RedBlackBst():
             # print('after blance: ')
             # print_rbtree(node)
 
-        # 算法4 中提供的方式，但是我们moveRedLeft未使用算法4中的方式，所以在blance时可以简化操作
+        # delmax 的平衡中 可能左右节点为红色的情况，左旋之后会产生连续两个红色子节点的情况
         if self.isRed(node.right) and not self.isRed(node.left):
             node = self.rotateLeft(node)
         else:
@@ -210,13 +214,13 @@ class RedBlackBst():
         # 递归向上的调整操作
         node.size = self.size(node.left) + self.size(node.right) + 1
         return self._blance(node)
-    
+
     def delMax(self):
         self.root = self._delMax(self.root)
         self.root.color = RBTreeNode.BLACK
 
     # 红黑树删除最大键
-    def _delMax(self,node):
+    def _delMax(self, node):
         if node.right is None:
             return node.left
         
@@ -226,8 +230,8 @@ class RedBlackBst():
         node.size = self.size(node.left) + self.size(node.right) + 1
         return self._blance(node)
 
-
     # 某个节点的后继节点
+
     def _min(self, node):
         if node.left is None:
             return node
@@ -246,7 +250,10 @@ class RedBlackBst():
 rbbst = RedBlackBst()
 
 import random
-for i in random.sample(range(10), 10):
+# randlist = random.sample(range(10), 10)
+randlist = [2, 5, 7, 3, 9, 4, 0, 1, 8, 6]
+print("random list:", randlist)
+for i in randlist:
     # print('put:', i, ":", i)
     rbbst.put(i, str(i))
     # print_rbtree(rbbst.root)
@@ -259,4 +266,5 @@ print_rbtree(rbbst.root)
 # delete max
 rbbst.delMax()
 print_rbtree(rbbst.root)
-
+rbbst.delMax()
+print_rbtree(rbbst.root)
