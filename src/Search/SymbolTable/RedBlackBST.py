@@ -62,6 +62,7 @@ class RedBlackBst():
     def put(self, key, value):
         self.root = self._put(self.root, key, value)
         self.root.color = RBTreeNode.BLACK
+        return self.root
 
     def _put(self, node, key, value):
         if node is None:
@@ -180,6 +181,7 @@ class RedBlackBst():
     def delMin(self):
         self.root = self._delMin(self.root)
         self.root.color = RBTreeNode.BLACK
+        return self.root
 
     # 红黑树删除最小键
     def _delMin(self, node):
@@ -218,12 +220,13 @@ class RedBlackBst():
     def delMax(self):
         self.root = self._delMax(self.root)
         self.root.color = RBTreeNode.BLACK
+        return self.root
 
     # 红黑树删除最大键
     def _delMax(self, node):
         if node.right is None:
             return node.left
-        
+
         node = self._moveRedRight(node)
 
         node.right = self._delMax(node.right)
@@ -231,7 +234,6 @@ class RedBlackBst():
         return self._blance(node)
 
     # 某个节点的后继节点
-
     def _min(self, node):
         if node.left is None:
             return node
@@ -239,11 +241,36 @@ class RedBlackBst():
 
     def delete(self, key):
         self.root = self._delete(self.root, key)
+        self.root.color = RBTreeNode.BLACK
         return self.root
 
     # 红黑树删除指定节点
     def _delete(self, node, key):
-        pass
+        if node is None: 
+            return None
+        if key < node.key:
+            node = self._moveRedLeft(node)
+            node.left = self._delete(node.left, key)
+        elif key > node.key:
+            node = self._moveRedRight(node)
+            node.right = self._delete(node.right, key)
+        else:
+            if node.left is None:
+                return node.right
+            if node.right is None:
+                return node.left
+            node = self._moveRedRight(node)
+            # print_rbtree(self.root)
+            successor = self._min(node.right)
+            node.key, successor.key = successor.key, node.key
+            node.val, successor.val = successor.val, node.val
+            node.right = self._delMin(node.right)
+        return self._blance(node)
+
+    def log(self, msg=None):
+        if msg:
+            print(msg)
+        print_rbtree(self.root)
 
 
 # 操作部分
@@ -257,14 +284,19 @@ for i in randlist:
     # print('put:', i, ":", i)
     rbbst.put(i, str(i))
     # print_rbtree(rbbst.root)
-print_rbtree(rbbst.root)
 
-# delete min
-rbbst.delMin()
-print_rbtree(rbbst.root)
+rbbst.log("init tree :")
 
-# delete max
-rbbst.delMax()
-print_rbtree(rbbst.root)
-rbbst.delMax()
-print_rbtree(rbbst.root)
+while True:
+    oper = input("operations: [delmin, delmax, del, put] ")
+    if oper == 'delmin':
+        rbbst.delMin()
+    elif oper == 'delmax':
+        rbbst.delMax()
+    elif oper == 'del':
+        key = input("delete (number):")
+        rbbst.delete(int(key))
+    elif oper == 'put':
+        key = input("put (number):")
+        rbbst.put(key, str(key))
+    rbbst.log(oper)
