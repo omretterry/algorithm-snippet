@@ -148,12 +148,13 @@ class RedBlackBst():
                 node.left.color = RBTreeNode.RED
                 node.right.color = RBTreeNode.RED
             else:
-                print_rbtree(node)
                 node = self.rotateRight(node)
-                print_rbtree(node)
-                node.left.color = RBTreeNode.BLACK
+                node.color = RBTreeNode.BLACK
                 node.right.color = RBTreeNode.RED
-                node.right = self.rotateLeft(node.right)
+                # node.left.color = RBTreeNode.BLACK
+                # node.right.color = RBTreeNode.RED
+                # node.right = self.flipColor(node.right)
+                # node.right = self.rotateLeft(node.right)
         return node
 
     # 删除操作结束后，向上平衡红黑树（分解临时的4-节点）
@@ -227,7 +228,11 @@ class RedBlackBst():
         if node.right is None:
             return node.left
 
+        print("before move right: ")
+        print_rbtree(node)
         node = self._moveRedRight(node)
+        print("after move right: ")
+        print_rbtree(node)
 
         node.right = self._delMax(node.right)
         node.size = self.size(node.left) + self.size(node.right) + 1
