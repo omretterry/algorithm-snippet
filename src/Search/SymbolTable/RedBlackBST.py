@@ -140,21 +140,10 @@ class RedBlackBst():
 
     # 从左节点借节点过来
     def _moveRedRight(self, node):
-        # 右节点是黑色节点
-        if not self.isRed(node.right) and not self.isRed(node.right.left):
-            # 左右子节点都是2-节点
-            if not self.isRed(node.left) and not self.isRed(node.left.left):
-                node.color = RBTreeNode.BLACK
-                node.left.color = RBTreeNode.RED
-                node.right.color = RBTreeNode.RED
-            else:
-                node = self.rotateRight(node)
-                node.color = RBTreeNode.BLACK
-                node.right.color = RBTreeNode.RED
-                # node.left.color = RBTreeNode.BLACK
-                # node.right.color = RBTreeNode.RED
-                # node.right = self.flipColor(node.right)
-                # node.right = self.rotateLeft(node.right)
+        # 情况1 当前节点是红色节点 -> 说明是转换过后的3-或4-节点
+        # 情况2 当前节点是黑色节点
+        #   情况 2-1 左节点是黑色节点（无法借过来，合并成4-节点）
+        #   情况 2-2 左节点2-节点，可以借一个过来
         return node
 
     # 删除操作结束后，向上平衡红黑树（分解临时的4-节点）
