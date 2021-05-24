@@ -140,14 +140,30 @@ class RedBlackBst():
 
     # 从左节点借节点过来
     def _moveRedRight(self, node):
-        # 情况1 当前节点是红色节点 -> 说明是转换过后的3-或4-节点
-        # 情况2 当前节点是黑色节点
+        # 情况1 右边的节点是3-节点，不需要调整
+        # 情况2 右边节点是2-节点，需要调整
         #   情况 2-1 左节点是黑色节点（无法借过来，合并成4-节点）
-        #   情况 2-2 左节点2-节点，可以借一个过来
+        #   情况 2-2 左节点3-节点，可以借一个过来
+        # 由于删除最大节点，所以保证向下调整的时候保证局部右倾可以方便删除操作 (右倾之后就可以和moveRedLeft镜像操作)
+        if self.isRed(node.right.left) and not self.isRed(node.right):
+            node.right = self.rotateRight(node.right)
+            # print_rbtree(node)
+            
+        if not self.isRed(node.right) and not self.isRed(node.right.right):
+            if not self.isRed(node.left) and not self.isRed(node.left.left):
+                node.color = RBTreeNode.BLACK
+                node.left.color = RBTreeNode.RED
+                node.right.color = RBTreeNode.RED
+            elif not self.isRed(node.left) and self.isRed(node.left.left):
+                node = self.rotateRight(node)
+                node.left.color = RBTreeNode.BLACK
+                node.right.right.color = RBTreeNode.RED
+        
         return node
 
     # 删除操作结束后，向上平衡红黑树（分解临时的4-节点）
     def _blance(self, node):
+        # print_rbtree(node)
         # delmin 平衡中只需左旋
         if self.isRed(node.right):
             # 节点左旋，我们是用的moveRedLeft方式，保证了只有带删除的叶子节点可能是一个临时的4-节点
@@ -208,6 +224,7 @@ class RedBlackBst():
         return self._blance(node)
 
     def delMax(self):
+        # 根节点如果是3-节点，变成右倾节点，方便和delMin做镜像操作
         self.root = self._delMax(self.root)
         self.root.color = RBTreeNode.BLACK
         return self.root
@@ -217,11 +234,11 @@ class RedBlackBst():
         if node.right is None:
             return node.left
 
-        print("before move right: ")
-        print_rbtree(node)
+        # print("before move right: ")
+        # print_rbtree(node)
         node = self._moveRedRight(node)
-        print("after move right: ")
-        print_rbtree(node)
+        # print("after move right: ")
+        # print_rbtree(node)
 
         node.right = self._delMax(node.right)
         node.size = self.size(node.left) + self.size(node.right) + 1
@@ -245,20 +262,19 @@ class RedBlackBst():
         if key < node.key:
             node = self._moveRedLeft(node)
             node.left = self._delete(node.left, key)
-        elif key > node.key:
-            node = self._moveRedRight(node)
-            node.right = self._delete(node.right, key)
         else:
-            if node.left is None:
-                return node.right
             if node.right is None:
-                return node.left
+                return None
             node = self._moveRedRight(node)
-            # print_rbtree(self.root)
-            successor = self._min(node.right)
-            node.key, successor.key = successor.key, node.key
-            node.val, successor.val = successor.val, node.val
-            node.right = self._delMin(node.right)
+            if key > node.key:
+                node.right = self._delete(node.right, key)
+            else:
+                successor = self._min(node.right)
+                node.key, successor.key = successor.key, node.key
+                node.val, successor.val = successor.val, node.val
+                # self.log('ready to delete: ')
+                node.right = self._delMin(node.right)
+                # self.log('after delete: ')
         return self._blance(node)
 
     def log(self, msg=None):
