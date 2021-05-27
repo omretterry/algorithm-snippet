@@ -31,11 +31,11 @@ class SequentialSearchST():
         self.st = Node(key, val, self.st)
 
 
-# test
-t = "searchexample"
-st = SequentialSearchST()
-for i in range(len(t)):
-    st.put(t[i], i)
+# test - SeparateChainingHashST 中引用需要注释
+# t = "searchexample"
+# st = SequentialSearchST()
+# for i in range(len(t)):
+#     st.put(t[i], i)
 
-for k in t:
-    print(st.get(k))
+# for k in t:
+#     print(st.get(k))

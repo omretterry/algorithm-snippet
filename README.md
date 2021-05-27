@@ -25,4 +25,5 @@
     * BinarySearchST - 基于有序数组的有序符号表
     * BST - 二叉搜索树
     * RedBlackBST - 红黑树（算法4中基于2-3树的左倾红黑树）
+    * SeparateChainingHashST - 基于拉链法的散列表
 
